@@ -91,6 +91,8 @@ The php.ini template, if the configuration path has not been customized, will be
 
 It must be brought into line with the PHP configuration of the installed package version, adjusting the loaded plugins if necessary, and, in addition, find the new zend.dlopen_deepbind option in it and disable it (set it to Off; it is enabled by default).
 
+**Note:** PHP usually assumes when building from source with the default prefix that the configuration file is in /usr/local/lib. Copy it there, or move it, or create a symbolic link, at your discretion.
+
 If a workaround with libC preload was used for the web server and PHP scripts, it must be disabled.
 
 Now you can safely preload a custom allocator globally or per-service.
