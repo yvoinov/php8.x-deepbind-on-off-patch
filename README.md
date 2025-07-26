@@ -27,13 +27,13 @@ patch -p0 < php8.x_deepbind_on_off.patch
 
 Configuration template for 64-bit build with GCC (example, configure PHP options in accordance with the configuration of the installed build from the repository):
 ```sh
-./configure 'CFLAGS=-O3 -m64' 'CXXFLAGS=-O3 -m64'
+./configure 'CFLAGS=-O3 -m64 -s' 'CXXFLAGS=-O3 -m64 -s'
 ```
 **Note:** Do **NOT** use -flto, it is incompatible with PHP.
 
 Example for libphp.so and mysql support (zabbix 7.x+ with Apache2):
 ```sh
-./configure 'CFLAGS=-O3 -m64' 'CXXFLAGS=-O3 -m64' \
+./configure 'CFLAGS=-O3 -m64 -s' 'CXXFLAGS=-O3 -m64 -s' \
 --with-apxs2=/usr/bin/apxs \
 --with-mysqli \
 --with-pdo-mysql \
@@ -59,7 +59,7 @@ Example for libphp.so and mysql support (zabbix 7.x+ with Apache2):
 ```
 Then
 ```sh
-make && make install-strip
+make && make install
 ```
 **Note:** DO NOT REMOVE the PHP 8.x version installed from the repositories, to avoid breaking dependencies. DO NOT remove the installed version of PHP 8.x from the repositories, to avoid breaking dependencies. Do not modify package version files, as they may be overwritten by updates, and do not set immutable flags. This may lead to difficulties in maintaining the configuration.
 
