@@ -96,12 +96,12 @@ Using custom build
 
 By default, if no prefix is specified, PHP will be built and installed in /usr/local.
 
+Note:  PHP  usually  assumes  when  building  from  source  with  the  default  prefix that the configuration file is in
+/usr/local/lib.
+
 It  must  be brought into line with the PHP configuration of the installed package version, adjusting the loaded plugins
 if  necessary,  and,  in  addition,  find the new zend.dlopen_deepbind option in it and disable it (set it to Off; it is
 enabled by default).
-
-Note:  PHP  usually  assumes  when  building  from  source  with  the  default  prefix that the configuration file is in
-/usr/local/lib.
 
 If a workaround with libC preload was used for the web server and PHP scripts, it must be disabled.
 
