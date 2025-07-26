@@ -35,13 +35,13 @@ Configuration and build
 Configuration template for 64-bit build with GCC (example, configure PHP options in accordance with the configuration of
 the installed build from the repository):
 
-./configure 'CFLAGS=-O3 -m64 -s'
+./configure 'CFLAGS=-O3 -m64' 'CXXFLAGS=-O3 -m64'
 
 Note: Do NOT use -flto, it is incompatible with PHP.
 
 Example for libphp.so and mysql support (zabbix 7.x+ with Apache2):
 
-./configure 'CFLAGS=-O3 -m64 -s' \
+./configure 'CFLAGS=-O3 -m64' 'CXXFLAGS=-O3 -m64' \
 --with-apxs2=/usr/bin/apxs \
 --with-mysqli \
 --with-pdo-mysql \
@@ -67,7 +67,7 @@ Example for libphp.so and mysql support (zabbix 7.x+ with Apache2):
 
 Then
 
-make && make install
+make && make install-strip
 
 Note:  DO  NOT REMOVE the PHP 8.x version installed from the repositories, to avoid breaking dependencies. DO NOT remove
 the  installed  version  of PHP 8.x from the repositories, to avoid breaking dependencies. Do not modify package version
