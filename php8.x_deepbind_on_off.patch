@@ -1,0 +1,66 @@
+--- php.ini-development	2025-07-01 21:29:21.000000000 +0500
++++ php.ini-development	2025-07-25 09:20:56.000000000 +0500
+@@ -386,6 +386,12 @@
+ ; Production Value: 0
+ zend.exception_string_param_max_len = 15
+
++; Decides whether to use the dlopen(3) flag RTLD_DEEPBIND, if availalable, when
++; loading shared libraries.  This ensures symbol lookup will prefer symbols from
++; the shared object itself over global ones.  Conflicts with the use of custom
++; memory allocators.
++zend.dlopen_deepbind = On
++
+ ;;;;;;;;;;;;;;;;;
+ ; Miscellaneous ;
+ ;;;;;;;;;;;;;;;;;
+
+--- php.ini-production	2025-07-01 21:29:21.000000000 +0500
++++ php.ini-production	2025-07-25 09:21:31.000000000 +0500
+@@ -388,6 +388,12 @@
+ ; of sensitive information in stack traces.
+ zend.exception_string_param_max_len = 0
+
++; Decides whether to use the dlopen(3) flag RTLD_DEEPBIND, if availalable, when
++; loading shared libraries.  This ensures symbol lookup will prefer symbols from
++; the shared object itself over global ones.  Conflicts with the use of custom
++; memory allocators.
++zend.dlopen_deepbind = On
++
+ ;;;;;;;;;;;;;;;;;
+ ; Miscellaneous ;
+ ;;;;;;;;;;;;;;;;;
+
+--- Zend/zend.c	2025-07-01 21:29:21.000000000 +0500
++++ Zend/zend.c	2025-07-25 09:18:00.000000000 +0500
+@@ -199,6 +199,7 @@
+ ZEND_INI_BEGIN()
+ 	ZEND_INI_ENTRY("error_reporting",				NULL,		ZEND_INI_ALL,		OnUpdateErrorReporting)
+ 	STD_ZEND_INI_ENTRY("zend.assertions",				"1",    ZEND_INI_ALL,       OnUpdateAssertions,           assertions,   zend_executor_globals,  executor_globals)
++	STD_ZEND_INI_BOOLEAN("zend.dlopen_deepbind",		"1",	ZEND_INI_SYSTEM,	OnUpdateBool, dlopen_deepbind, zend_compiler_globals, compiler_globals)
+ 	ZEND_INI_ENTRY3_EX("zend.enable_gc",				"1",	ZEND_INI_ALL,		OnUpdateGCEnabled, NULL, NULL, NULL, zend_gc_enabled_displayer_cb)
+ 	STD_ZEND_INI_BOOLEAN("zend.multibyte", "0", ZEND_INI_PERDIR, OnUpdateBool, multibyte,      zend_compiler_globals, compiler_globals)
+ 	ZEND_INI_ENTRY("zend.script_encoding",			NULL,		ZEND_INI_ALL,		OnUpdateScriptEncoding)
+
+--- Zend/zend_globals.h	2025-07-01 21:29:21.000000000 +0500
++++ Zend/zend_globals.h	2025-07-25 09:18:45.000000000 +0500
+@@ -92,6 +92,8 @@
+
+ 	bool ini_parser_unbuffered_errors;
+
++	bool dlopen_deepbind;
++
+ 	zend_llist open_files;
+
+ 	struct _zend_ini_parser_param *ini_parser_param;
+
+--- Zend/zend_portability.h	2025-07-01 21:29:21.000000000 +0500
++++ Zend/zend_portability.h	2025-07-25 09:19:53.000000000 +0500
+@@ -153,7 +153,7 @@
+ # if defined(RTLD_GROUP) && defined(RTLD_WORLD) && defined(RTLD_PARENT)
+ #  define DL_LOAD(libname)			dlopen(libname, PHP_RTLD_MODE | RTLD_GLOBAL | RTLD_GROUP | RTLD_WORLD | RTLD_PARENT)
+ # elif defined(RTLD_DEEPBIND) && !defined(__SANITIZE_ADDRESS__) && !__has_feature(memory_sanitizer)
+-#  define DL_LOAD(libname)			dlopen(libname, PHP_RTLD_MODE | RTLD_GLOBAL | RTLD_DEEPBIND)
++#  define DL_LOAD(libname)			dlopen(libname, PHP_RTLD_MODE | RTLD_GLOBAL | (CG(dlopen_deepbind) ? RTLD_DEEPBIND : 0))
+ # else
+ #  define DL_LOAD(libname)			dlopen(libname, PHP_RTLD_MODE | RTLD_GLOBAL)
+ # endif
