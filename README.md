@@ -27,13 +27,13 @@ patch -p0 < php8.x_deepbind_on_off.patch
 
 Configuration template for 64-bit build with GCC (example, configure PHP options in accordance with the configuration of the installed build from the repository):
 ```sh
-./configure 'CFLAGS=-O3 -m64 -s' 'CXXFLAGS=-O3 -m64 -s'
+./configure 'CFLAGS=-O3 -m64 -s'
 ```
 **Note:** Do **NOT** use -flto, it is incompatible with PHP.
 
 Example for libphp.so and mysql support (zabbix 7.x+ with Apache2):
 ```sh
-./configure 'CFLAGS=-O3 -m64 -s' 'CXXFLAGS=-O3 -m64 -s' \
+./configure 'CFLAGS=-O3 -m64 -s' \
 --with-apxs2=/usr/bin/apxs \
 --with-mysqli \
 --with-pdo-mysql \
@@ -87,11 +87,9 @@ Make sure php is calling the correct version from /usr/local.
 
 By default, if no prefix is specified, PHP will be built and installed in /usr/local.
 
-The php.ini template, if the configuration path has not been customized, will be placed in /usr/local/etc.
+**Note:** PHP usually assumes when building from source with the default prefix that the configuration file is in /usr/local/lib.
 
 It must be brought into line with the PHP configuration of the installed package version, adjusting the loaded plugins if necessary, and, in addition, find the new zend.dlopen_deepbind option in it and disable it (set it to Off; it is enabled by default).
-
-**Note:** PHP usually assumes when building from source with the default prefix that the configuration file is in /usr/local/lib. Copy it there, or move it, or create a symbolic link, at your discretion.
 
 If a workaround with libC preload was used for the web server and PHP scripts, it must be disabled.
 
